@@ -15,21 +15,31 @@ namespace MonoSquares
         public PhysicsEngine()
         {
             Entities = new List<IPhysics>();
-
+            NonThinkingEntities = new List<IPhysics>();
         }
 
         public void BindEntity(IPhysics entity)
         {
-            if(entity.PhysicsType==0)
+            if (entity.PhysicsType == 0)
+            {
                 NonThinkingEntities.Add(entity);
+
+                //Debug.WriteLine($"Bind NON thinking {entity}");
+            }
             else if (entity.PhysicsType == 1)
+            {
                 Entities.Add(entity);
+
+                //Debug.WriteLine($"Bind {entity}");
+            }
         }
 
         public void Think()
         {
             foreach(var entity in Entities)
             {
+                //Debug.WriteLine($"THINKING {entity}");
+
                 foreach (var collidableEntity in GetCollidableEntities())
                 {
                     if (entity.Body.Intersects(collidableEntity.Body) && entity!=collidableEntity && collidableEntity.IsSolid && entity.IsSolid)
@@ -42,29 +52,31 @@ namespace MonoSquares
                         }
                     }
                 }
+
+                UpdatePosition(entity);
             }
         }
 
         private void CreateCollision(IPhysics entity1, IPhysics entity2)
         {
-            if (IsCollisionVertical(entity1, entity2))
-            {
-                bool verticalCollision = true;
-            }
 
-                Vector2 tempVelocity = entity1.Velocity;
-                double tempSpeed = Math.Sqrt(Math.Pow(tempVelocity.X, 2) + Math.Pow(tempVelocity.Y, 2));
-                double tempDir = GetDirection(entity1);
+            Vector2 tempVelocity = entity1.Velocity;
+            double tempSpeed = Math.Sqrt(Math.Pow(tempVelocity.X, 2) + Math.Pow(tempVelocity.Y, 2));
+            double tempDir = GetDirection(entity1);
                 
-                //Debug.WriteLine(tempSpeed);
+            //Debug.WriteLine(tempSpeed);
 
-                entity1.Velocity = Vector2.Zero;
+            entity1.Velocity = Vector2.Zero;
+            if(IsCollisionVertical(entity1, entity2))
+            {
                 AdditativeImpactReflective(entity1, 5, tempDir + Math.PI);
-                //player.Velocity *= -2;
-                entity1.Collided = true;
-                //player.Acceleration = 0.01f;
+            }
+            
+            //player.Velocity *= -2;
+            entity1.Collided = true;
+            //player.Acceleration = 0.01f;
 
-                Debug.WriteLine($"COLLISION AT X {entity1.Body.X} | Y {entity1.Body.Y}");
+            Debug.WriteLine($"COLLISION AT X {entity1.Body.X} | Y {entity1.Body.Y}");
                
         }
 
@@ -113,6 +125,7 @@ namespace MonoSquares
         {
             entity.Velocity = new Vector2(entity.Velocity.X * entity.Friction, entity.Velocity.Y * entity.Friction);
             entity.Position += entity.Velocity;
+            entity.Body = new Rectangle((int)entity.Position.X, (int)entity.Position.Y, entity.Body.Width, entity.Body.Height);
             //body.X = (int)Position.X;
             //body.Y = (int)Position.Y;
         }

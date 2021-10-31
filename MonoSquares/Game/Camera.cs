@@ -61,7 +61,7 @@ namespace MonoSquares
             {
                 body.Texture = content.Load<Texture2D>(body.TexturePath);
 
-                Debug.WriteLine($"Loaded: {body.TexturePath}");
+                //Debug.WriteLine($"Loaded: {body.TexturePath}");
 
             }
         }

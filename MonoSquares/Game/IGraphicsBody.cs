@@ -9,7 +9,7 @@ namespace MonoSquares
 {
     interface IGraphicsBody
     {
-        Rectangle Body { get; set; }
+        public Rectangle Body { get; set; }
         public Texture2D Texture { get; set; }
         public String TexturePath { get; set; }
 
