@@ -39,12 +39,12 @@ namespace MonoSquares
             foreach(var entity in Entities)
             {
                 //Debug.WriteLine($"THINKING {entity}");
-
+                
                 foreach (var collidableEntity in GetCollidableEntities())
                 {
-                    if (entity.Body.Intersects(collidableEntity.Body) && entity!=collidableEntity && collidableEntity.IsSolid && entity.IsSolid)
+                    if (entity.Body.Intersects(collidableEntity.Body) && entity!=collidableEntity && collidableEntity.IsSolid && entity.IsSolid && !entity.Collided)
                     {
-                        Debug.WriteLine("Collided!");
+                        //Debug.WriteLine($"Collided! X {collidableEntity.Body.X} | Y {collidableEntity.Body.Y} | {collidableEntity}");
 
                         if(entity.PhysicsType==1)
                         {
@@ -52,7 +52,8 @@ namespace MonoSquares
                         }
                     }
                 }
-
+                
+                entity.Collided=false;
                 UpdatePosition(entity);
             }
         }
@@ -69,7 +70,11 @@ namespace MonoSquares
             entity1.Velocity = Vector2.Zero;
             if(IsCollisionVertical(entity1, entity2))
             {
-                AdditativeImpactReflective(entity1, 5, tempDir + Math.PI);
+                AdditativeImpactVertical(entity1, 5, tempDir + Math.PI);
+            }
+            else
+            {
+                AdditativeImpactHorizontal(entity1, 5, tempDir + Math.PI);
             }
             
             //player.Velocity *= -2;
@@ -100,11 +105,11 @@ namespace MonoSquares
 
             if(Rectangle.Intersect(entity1.Body, entity2.Body).Width > Rectangle.Intersect(entity1.Body, entity2.Body).Height)
             {
-                return true;
+                return false;
             }
             else
             {
-                return false;
+                return true;
             }
 
         }
@@ -124,20 +129,32 @@ namespace MonoSquares
         public void UpdatePosition(IPhysics entity)
         {
             entity.Velocity = new Vector2(entity.Velocity.X * entity.Friction, entity.Velocity.Y * entity.Friction);
-            entity.Position += entity.Velocity;
-            entity.Body = new Rectangle((int)entity.Position.X, (int)entity.Position.Y, entity.Body.Width, entity.Body.Height);
+            //entity.Position += entity.Velocity;
+
+            //Debug.WriteLine(entity.Body.X);
+            entity.Body = new Rectangle((int)(entity.Body.X + entity.Velocity.X), (int)(entity.Body.Y + entity.Velocity.Y), entity.Body.Width, entity.Body.Height);
             //body.X = (int)Position.X;
             //body.Y = (int)Position.Y;
         }
 
         public void AdditativeImpact(IPhysics entity, double amount, double direction)
         {
+            //amount *= 2;
             entity.Velocity += new Vector2((float)(amount * Math.Cos(direction)), (float)(amount * Math.Sin(direction)));
         }
 
-        public void AdditativeImpactReflective(IPhysics entity, double amount, double direction)
+        public void AdditativeImpactVertical(IPhysics entity, double amount, double direction)
         {
+            amount *= 2;
+            entity.Velocity += new Vector2((float)(amount * Math.Cos(direction)), (float)(amount * Math.Sin(direction)*-1));
+            Debug.WriteLine("Vertical Collision");
+        }
+
+        public void AdditativeImpactHorizontal(IPhysics entity, double amount, double direction)
+        {
+            amount *= 2;
             entity.Velocity += new Vector2((float)(amount * Math.Cos(direction)*-1), (float)(amount * Math.Sin(direction)));
+            Debug.WriteLine("Horizontal Collision");
         }
 
         public double GetSpeed(IPhysics entity)

@@ -14,7 +14,6 @@ namespace MonoSquares
         public String TexturePath { get; set; }
         public Vector2 tempVelocity { get; set; }
         public Vector2 Velocity { get; set; }
-        public Vector2 Position { get; set; } = Vector2.Zero;
 
         public float Acceleration { get; set; } = 0.5f;
         public float MaxSpeed { get; set; } = 1.0f;

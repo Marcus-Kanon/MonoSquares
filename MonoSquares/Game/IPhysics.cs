@@ -12,7 +12,6 @@ namespace MonoSquares
         public Rectangle Body { get; set; }
         public Vector2 tempVelocity { get; set; }
         public Vector2 Velocity { get; set; }
-        public Vector2 Position { get; set; }
 
         public float Acceleration { get; set; }
         public float MaxSpeed { get; set; }

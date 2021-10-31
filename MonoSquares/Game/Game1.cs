@@ -36,7 +36,7 @@ namespace MonoSquares
             _graphics.PreferredBackBufferHeight = SCREEN_HEIGHT;
             _graphics.ApplyChanges();
 
-            Cam.Pos = new Vector2(600, 600);
+            
 
             base.Initialize();
         }
@@ -46,34 +46,52 @@ namespace MonoSquares
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             Cam.Scene = _spriteBatch;
             Cam.Device = _graphics.GraphicsDevice;
+            Cam.Pos = new Vector2(500, 500);
 
-            player = new Player();
-            player.TexturePath="3";
-            player.PhysicsType = 1;
-            player.Body = new Rectangle(200, 200, 30, 30);
+            
 
-            Engine.BindEntity(player);
-            Cam.BindObject(player);
-
-            /*
-            gameobject = new GameObject[10, 10];
-
+            
+            gameobject = new GameObject[7, 10];
+            
             int tileSize = 100;
-            for (int y = 0; y < 10; y++)
+            for (int y = 0; y < 7; y++)
             {
                 for (int x = 0; x < 10; x++)
                 {
-                    gameobject[y, x] = new GameObject();
-                    gameobject[y, x].TexturePath = "Floor1";
-                    gameobject[y, x].Body = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
-                    gameobject[y, x].PhysicsType = 0;
+                    if(y == 0 || y == 6 || x == 0 || x == 9)
+                    {
+                        gameobject[y, x] = new GameObject();
+                        gameobject[y, x].TexturePath = "Floor1";
+                        gameobject[y, x].Body = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
+                        gameobject[y, x].PhysicsType = 0;
+                        gameobject[y, x].IsSolid = true;
+                    }
+                    else
+                    {
+                        gameobject[y, x] = new GameObject();
+                        gameobject[y, x].TexturePath = "Tile_12";
+                        gameobject[y, x].Body = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
+                        gameobject[y, x].PhysicsType = 0;
+                        gameobject[y, x].IsSolid = false;
+                    }
+                    
 
                     Cam.BindObject(gameobject[y, x]);
                     Engine.BindEntity(gameobject[y, x]);
                 }
-            }
-            */
 
+                player = new Player();
+                player.TexturePath = "3";
+                player.PhysicsType = 1;
+                player.Body = new Rectangle(300, 300, 30, 30);
+
+            }
+
+            
+
+
+            Engine.BindEntity(player);
+            Cam.BindObject(player);
 
             Cam.LoadTextures(Content);
                         
@@ -87,18 +105,18 @@ namespace MonoSquares
 
 
             if(Keyboard.GetState().IsKeyDown(Keys.Space))
-                Cam.Zoom -= 0.1f;
+                Cam.Zoom -= 0.001f;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.W) && !player.Collided)
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
                 Engine.AdditativeImpact(player, player.MaxSpeed / (Math.Abs(player.Velocity.Y) + 1) * player.Acceleration, -Math.PI / 2);
 
-            if (Keyboard.GetState().IsKeyDown(Keys.S) && !player.Collided)
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
                 Engine.AdditativeImpact(player, player.MaxSpeed / (Math.Abs(player.Velocity.Y) + 1) * player.Acceleration, Math.PI / 2);
 
-            if (Keyboard.GetState().IsKeyDown(Keys.A) && !player.Collided)
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
                 Engine.AdditativeImpact(player, player.MaxSpeed / (Math.Abs(player.Velocity.X) + 1) * player.Acceleration, Math.PI);
 
-            if (Keyboard.GetState().IsKeyDown(Keys.D) && !player.Collided)
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
                 Engine.AdditativeImpact(player, player.MaxSpeed / (Math.Abs(player.Velocity.X) + 1) * player.Acceleration, Math.PI * 2);
 
 
