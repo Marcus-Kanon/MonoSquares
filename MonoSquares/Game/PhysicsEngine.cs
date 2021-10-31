@@ -9,7 +9,9 @@ namespace MonoSquares
 {
     class PhysicsEngine
     {
-        private List<IPhysics> Entities;
+        public delegate void Handler(IPhysics ent1, IPhysics ent2, EventArgs e);
+
+        public List<IPhysics> Entities;
         private List<IPhysics> NonThinkingEntities;
 
         public PhysicsEngine()
@@ -32,6 +34,8 @@ namespace MonoSquares
 
                 //Debug.WriteLine($"Bind {entity}");
             }
+
+            this.Touch += new Handler(entity.OnTouch);
         }
 
         public void Think()
@@ -81,28 +85,22 @@ namespace MonoSquares
             entity1.Collided = true;
             //player.Acceleration = 0.01f;
 
+            OnTouch(entity1, entity2);
+
             Debug.WriteLine($"COLLISION AT X {entity1.Body.X} | Y {entity1.Body.Y}");
                
         }
 
+        public event Handler Touch;
+        public void OnTouch(IPhysics entity1, IPhysics entity2)
+        {
+            Handler handler = Touch;
+
+            if (null != handler) handler(entity1, entity2, EventArgs.Empty);
+        }
+
         public bool IsCollisionVertical(IPhysics entity1, IPhysics entity2)
         {
-            /* Used to determine what corner overlaps
-            bool top=false, left=false;
-
-            if(entity1.Body.X > entity2.Body.Center.X) //Entity 1 is on the right side
-                left = false;
-
-            if (entity1.Body.X<entity2.Body.Center.X) //Entity 1 is on the left side
-                left = true;
-
-            if (entity1.Body.Y<entity2.Body.Center.Y) //Entity 1 is on the top side
-                top = true;
-
-            if (entity1.Body.Y > entity2.Body.Center.Y) //Entity 1 is on the bottom side
-                top = false;
-            */
-
             if(Rectangle.Intersect(entity1.Body, entity2.Body).Width > Rectangle.Intersect(entity1.Body, entity2.Body).Height)
             {
                 return false;
@@ -129,12 +127,9 @@ namespace MonoSquares
         public void UpdatePosition(IPhysics entity)
         {
             entity.Velocity = new Vector2(entity.Velocity.X * entity.Friction, entity.Velocity.Y * entity.Friction);
-            //entity.Position += entity.Velocity;
 
             //Debug.WriteLine(entity.Body.X);
             entity.Body = new Rectangle((int)(entity.Body.X + entity.Velocity.X), (int)(entity.Body.Y + entity.Velocity.Y), entity.Body.Width, entity.Body.Height);
-            //body.X = (int)Position.X;
-            //body.Y = (int)Position.Y;
         }
 
         public void AdditativeImpact(IPhysics entity, double amount, double direction)

@@ -11,9 +11,13 @@ namespace MonoSquares
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
-        GameObject[,] gameobject;
+        private SpriteBatch spriteBatch;
+
+        GameObject[,] walls;
         Player player;
+        Monster monster;
+        private SpriteFont font;
+
         Camera Cam = new Camera();
         PhysicsEngine Engine = new PhysicsEngine();
         const int SCREEN_WIDTH = 1280;
@@ -43,16 +47,15 @@ namespace MonoSquares
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-            Cam.Scene = _spriteBatch;
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            font = Content.Load<SpriteFont>("font");
+
+            Cam.Scene = spriteBatch;
             Cam.Device = _graphics.GraphicsDevice;
             Cam.Pos = new Vector2(500, 500);
 
-            
-
-            
-            gameobject = new GameObject[7, 10];
-            
+            walls = new GameObject[7, 10];
             int tileSize = 100;
             for (int y = 0; y < 7; y++)
             {
@@ -60,38 +63,44 @@ namespace MonoSquares
                 {
                     if(y == 0 || y == 6 || x == 0 || x == 9)
                     {
-                        gameobject[y, x] = new GameObject();
-                        gameobject[y, x].TexturePath = "Floor1";
-                        gameobject[y, x].Body = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
-                        gameobject[y, x].PhysicsType = 0;
-                        gameobject[y, x].IsSolid = true;
+                        walls[y, x] = new GameObject();
+                        walls[y, x].Body = new Rectangle(0, 0, tileSize, tileSize);
+                        walls[y, x].TexturePath = "Floor1";
+                        walls[y, x].Body = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
+                        walls[y, x].PhysicsType = 0;
+                        walls[y, x].IsSolid = true;
                     }
                     else
                     {
-                        gameobject[y, x] = new GameObject();
-                        gameobject[y, x].TexturePath = "Tile_12";
-                        gameobject[y, x].Body = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
-                        gameobject[y, x].PhysicsType = 0;
-                        gameobject[y, x].IsSolid = false;
+                        walls[y, x] = new GameObject();
+                        walls[y, x].TexturePath = "Tile_12";
+                        walls[y, x].Body = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
+                        walls[y, x].PhysicsType = 0;
+                        walls[y, x].IsSolid = false;
                     }
                     
 
-                    Cam.BindObject(gameobject[y, x]);
-                    Engine.BindEntity(gameobject[y, x]);
+                    Cam.BindObject(walls[y, x]);
+                    Engine.BindEntity(walls[y, x]);
                 }
-
-                player = new Player();
-                player.TexturePath = "3";
-                player.PhysicsType = 1;
-                player.Body = new Rectangle(300, 300, 30, 30);
-
             }
 
-            
 
-
+            player = new Player();
+            player.TexturePath = "3";
+            player.Body = new Rectangle(300, 300, 30, 30);
+            player.showScore = true;
             Engine.BindEntity(player);
             Cam.BindObject(player);
+
+            monster = new Monster();
+            monster.TexturePath = "3";
+            monster.Body = new Rectangle(500, 500, 30, 30);
+            monster.Engine = Engine;
+            monster.showScore = true;
+            Controller monsterControl = new Controller(monster.Control, 3);
+            Engine.BindEntity(monster);
+            Cam.BindObject(monster);
 
             Cam.LoadTextures(Content);
                         
@@ -130,8 +139,27 @@ namespace MonoSquares
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            Cam.pos.X = player.Body.X;
+            Cam.pos.Y = player.Body.Y;
             Cam.Update();
+
+            foreach (GameObject ent in Engine.Entities)
+            {
+                if (ent.showScore)
+                {
+                    spriteBatch.Begin();
+                    spriteBatch.DrawString(font, "Health " + ent.Health, new Vector2(ent.Body.X, ent.Body.Y), Color.Black);
+                    spriteBatch.End();
+                }
+
+                if (ent.Health <= 0)
+                {
+                    Cam.Bodies.Remove(ent);
+                    Engine.Entities.Remove(ent);
+                    break;
+                }
+            }
+
 
             base.Draw(gameTime);
         }

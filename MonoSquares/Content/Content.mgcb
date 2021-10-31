@@ -37,6 +37,13 @@
 /processorParam:TextureFormat=Color
 /build:Floor1.png
 
+#begin font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:font.spritefont
+
 #begin Tile_12.png
 /importer:TextureImporter
 /processor:TextureProcessor

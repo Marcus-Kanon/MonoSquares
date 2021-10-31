@@ -19,5 +19,8 @@ namespace MonoSquares
         public bool IsSolid { get; set; }
         public bool Collided { get; set; }
         public int PhysicsType { get; set; } // 0: Non-thinking 1: Thinking
+        public virtual void OnTouch(object entity1, object entity2, EventArgs e) { }
+
+
     }
 }

@@ -13,7 +13,7 @@ namespace MonoSquares
     {
         public GraphicsDevice Device;
         public SpriteBatch Scene;
-        private List<IGraphicsBody> Bodies = new List<IGraphicsBody>();
+        public List<IGraphicsBody> Bodies = new List<IGraphicsBody>();
 
         protected float zoom; // Camera Zoom
         public Matrix transform; // Matrix Transform
@@ -72,8 +72,10 @@ namespace MonoSquares
 
             foreach (var graphic in Bodies)
             {
-
-                Scene.Draw(graphic.Texture, graphic.Body, Color.White);
+                if (graphic != null)
+                {
+                    Scene.Draw(graphic.Texture, graphic.Body, Color.White);
+                }
             
             }
             

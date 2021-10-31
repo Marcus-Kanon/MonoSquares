@@ -7,19 +7,38 @@ using System.Diagnostics;
 
 namespace MonoSquares
 {
-    class Player : IGraphicsBody, IPhysics
+    class Player : GameObject
     {
-        public Rectangle Body { get; set; }
-        public Texture2D Texture { get; set; }
-        public String TexturePath { get; set; }
-        public Vector2 tempVelocity { get; set; }
-        public Vector2 Velocity { get; set; }
+        public Player()
+        {
+            Acceleration = 0.8f;
+            MaxSpeed = 2.0f;
+            Friction = 0.90f;
+            PhysicsType = 1;
+            IsSolid = true;
+            Damage = 3;
+            Health = 1000;
+        }
 
-        public float Acceleration { get; set; } = 0.5f;
-        public float MaxSpeed { get; set; } = 1.0f;
-        public float Friction { get; set; } = 0.95f;
-        public bool IsSolid { get; set; } = true;
-        public bool Collided { get; set; }
-        public int PhysicsType { get; set; } = 1; // 0: Non-thinking 1: Thinking
+
+        public override void OnTouch(object entity1, object entity2, EventArgs e)
+        {
+            GameObject ent1 = (GameObject)entity1;
+            GameObject ent2 = (GameObject)entity2;
+
+            if (ent2.PhysicsType == 1)
+            {
+                Health -= ent2.Damage;
+
+                Debug.WriteLine($"Health: {ent1.Health}");
+
+                Debug.WriteLine($"Health: {ent2.Health}");
+            }
+
+
+                
+        }
     }
+
+ 
 }
