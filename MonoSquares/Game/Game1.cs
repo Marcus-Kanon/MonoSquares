@@ -70,7 +70,7 @@ namespace MonoSquares
                 Exit();
 
 
-            if(Keyboard.GetState().IsKeyDown(Keys.Space)
+            if(Keyboard.GetState().IsKeyDown(Keys.Space))
                 Cam.Zoom += 0.1f;
 
             if (Keyboard.GetState().IsKeyDown(Keys.W))
