@@ -7,8 +7,10 @@ using System.Diagnostics;
 
 namespace MonoSquares
 {
-    class Player : GameObject
+    class Player : GameObject , ILiving
     {
+        public int Health { get; set; }
+        public int Damage { get; set; }
         public Player()
         {
             Acceleration = 0.8f;
@@ -20,11 +22,10 @@ namespace MonoSquares
             Health = 1000;
         }
 
-
-        public override void OnTouch(object entity1, object entity2, EventArgs e)
+        protected override void OnTouch(object entity1, object entity2, EventArgs e)
         {
-            GameObject ent1 = (GameObject)entity1;
-            GameObject ent2 = (GameObject)entity2;
+            Player ent1 = (Player)entity1;
+            Monster ent2 = (Monster)entity2;
 
             if (ent2.PhysicsType == 1)
             {

@@ -10,6 +10,7 @@ namespace MonoSquares
     class PhysicsEngine
     {
         public delegate void Handler(IPhysics ent1, IPhysics ent2, EventArgs e);
+        public event Handler Touch;
 
         public List<IPhysics> Entities;
         private List<IPhysics> NonThinkingEntities;
@@ -91,7 +92,7 @@ namespace MonoSquares
                
         }
 
-        public event Handler Touch;
+        
         public void OnTouch(IPhysics entity1, IPhysics entity2)
         {
             Handler handler = Touch;
@@ -142,14 +143,14 @@ namespace MonoSquares
         {
             amount *= 2;
             entity.Velocity += new Vector2((float)(amount * Math.Cos(direction)), (float)(amount * Math.Sin(direction)*-1));
-            Debug.WriteLine("Vertical Collision");
+            //Debug.WriteLine("Vertical Collision");
         }
 
         public void AdditativeImpactHorizontal(IPhysics entity, double amount, double direction)
         {
             amount *= 2;
             entity.Velocity += new Vector2((float)(amount * Math.Cos(direction)*-1), (float)(amount * Math.Sin(direction)));
-            Debug.WriteLine("Horizontal Collision");
+            //Debug.WriteLine("Horizontal Collision");
         }
 
         public double GetSpeed(IPhysics entity)

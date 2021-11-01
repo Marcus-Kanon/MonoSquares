@@ -12,7 +12,6 @@ namespace MonoSquares
         public Rectangle Body { get; set; }
         public Texture2D Texture { get; set; }
         public String TexturePath { get; set; }
-        bool showScore { get; set; }
 
     }
 }

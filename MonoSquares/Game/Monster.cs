@@ -14,6 +14,8 @@ namespace MonoSquares
     class Monster : GameObject, ILiving
     {
         public PhysicsEngine Engine;
+        public int Health { get; set; }
+        public int Damage { get; set; }
 
 
         public Monster()
@@ -27,10 +29,10 @@ namespace MonoSquares
             Health = 100;
         }
         
-        public override void OnTouch(object entity1, object entity2, EventArgs e)
+        protected override void OnTouch(object entity1, object entity2, EventArgs e)
         {
-            GameObject ent1 = (GameObject)entity1;
-            GameObject ent2 = (GameObject)entity2;
+            Monster ent1 = (Monster)entity1;
+            Player ent2 = (Player)entity2;
 
             if (ent2.PhysicsType == 1)
             {
