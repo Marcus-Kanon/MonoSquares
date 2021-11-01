@@ -46,8 +46,6 @@ namespace MonoSquares
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            font = Content.Load<SpriteFont>("font");
-
             Cam.Scene = spriteBatch;
             Cam.Device = _graphics.GraphicsDevice;
             Cam.Pos = new Vector2(500, 500);
