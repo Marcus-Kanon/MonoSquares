@@ -20,6 +20,8 @@ namespace MonoSquares
         public Vector2 pos; // Camera Position
         protected float rotation; // Camera Rotation
 
+        public IPhysics Following;
+
         public float Zoom
         {
             get { return zoom; }
@@ -48,8 +50,17 @@ namespace MonoSquares
             zoom = 1.0f;
             rotation = 0.0f;
             pos = Vector2.Zero;
-        }
 
+            Following = null;
+        }
+        public void FollowEntity()
+        {
+            if (Following != null)
+            {
+                pos.X = Following.Body.X;
+                pos.Y = Following.Body.Y;
+            }
+        }
         public void BindObject(IGraphicsBody obj)
         {
             Bodies.Add(obj);
@@ -78,6 +89,8 @@ namespace MonoSquares
                 }
             
             }
+
+            FollowEntity();
             
             Scene.End();
         }

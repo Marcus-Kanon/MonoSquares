@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MonoSquares
 {
-    class GameObject : IGraphicsBody, IPhysics, ILiving
+    class GameObject : IGraphicsBody, IPhysics
     {
         public Rectangle Body { get; set; }
         public Texture2D Texture { get; set; }
@@ -25,13 +25,8 @@ namespace MonoSquares
         public bool Collided { get; set; }
 
         public int PhysicsType { get; set; }
-        public int Health { get; set; } = 100;
-        public int Damage { get ; set ; }
         public bool showScore { get; set; } = false;
 
-        public virtual void OnTouch(object entity1, object entity2, EventArgs e)
-        {
-            //Debug.WriteLine("Tocuhed GameObject");
-        }
+        protected virtual void OnTouch(object entity1, object entity2, EventArgs e) { }
     }
 }

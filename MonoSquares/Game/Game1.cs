@@ -16,7 +16,6 @@ namespace MonoSquares
         GameObject[,] walls;
         Player player;
         Monster monster;
-        private SpriteFont font;
 
         Camera Cam = new Camera();
         PhysicsEngine Engine = new PhysicsEngine();
@@ -34,8 +33,6 @@ namespace MonoSquares
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             _graphics.PreferredBackBufferWidth = SCREEN_WIDTH;
             _graphics.PreferredBackBufferHeight = SCREEN_HEIGHT;
             _graphics.ApplyChanges();
@@ -103,8 +100,8 @@ namespace MonoSquares
             Cam.BindObject(monster);
 
             Cam.LoadTextures(Content);
+            Cam.Following = player;
                         
-            // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
@@ -129,7 +126,6 @@ namespace MonoSquares
                 Engine.AdditativeImpact(player, player.MaxSpeed / (Math.Abs(player.Velocity.X) + 1) * player.Acceleration, Math.PI * 2);
 
 
-            // TODO: Add your update logic here
             Engine.Think();
 
             base.Update(gameTime);
@@ -138,28 +134,7 @@ namespace MonoSquares
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            Cam.pos.X = player.Body.X;
-            Cam.pos.Y = player.Body.Y;
             Cam.Update();
-
-            foreach (GameObject ent in Engine.Entities)
-            {
-                if (ent.showScore)
-                {
-                    spriteBatch.Begin();
-                    spriteBatch.DrawString(font, "Health " + ent.Health, new Vector2(ent.Body.X, ent.Body.Y), Color.Black);
-                    spriteBatch.End();
-                }
-
-                if (ent.Health <= 0)
-                {
-                    Cam.Bodies.Remove(ent);
-                    Engine.Entities.Remove(ent);
-                    break;
-                }
-            }
-
 
             base.Draw(gameTime);
         }
