@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace MonoSquares
+namespace MonoSquares.Physics
 {
     interface IPhysics
     {
@@ -20,7 +20,7 @@ namespace MonoSquares
         public bool Collided { get; set; }
         public int PhysicsType { get; set; } // 0: Non-thinking 1: Thinking
         public virtual void OnTouch(object entity1, object entity2, EventArgs e) { }
-
+        public virtual void OnThink(object entity1, EventArgs e) { }
 
     }
 }

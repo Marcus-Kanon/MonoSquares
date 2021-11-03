@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MonoSquares
+namespace MonoSquares.Physics.GameObjects
 {
     class Monster : GameObject, ILiving
     {

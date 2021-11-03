@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MonoSquares
+namespace MonoSquares.Physics.GameObjects
 {
     interface ILiving
     {

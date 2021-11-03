@@ -5,14 +5,15 @@ using System.Text;
 using System.Linq;
 using System.Diagnostics;
 
-namespace MonoSquares
+namespace MonoSquares.Physics
 {
     class PhysicsEngine
     {
         public delegate void Handler(IPhysics ent1, IPhysics ent2, EventArgs e);
         public event Handler Touch;
+        public event EventHandler Think;
 
-        public List<IPhysics> Entities;
+        private List<IPhysics> Entities;
         private List<IPhysics> NonThinkingEntities;
 
         public PhysicsEngine()
@@ -26,83 +27,90 @@ namespace MonoSquares
             if (entity.PhysicsType == 0)
             {
                 NonThinkingEntities.Add(entity);
-
-                //Debug.WriteLine($"Bind NON thinking {entity}");
             }
             else if (entity.PhysicsType == 1)
             {
                 Entities.Add(entity);
-
-                //Debug.WriteLine($"Bind {entity}");
             }
 
             this.Touch += new Handler(entity.OnTouch);
+            this.Think += new EventHandler(entity.OnThink);
         }
 
-        public void Think()
+        public void Process()
         {
             foreach(var entity in Entities)
             {
-                //Debug.WriteLine($"THINKING {entity}");
-                
-                foreach (var collidableEntity in GetCollidableEntities())
+                IPhysics collidableEntity = HasCollided(entity, true);
+                if (collidableEntity!=null)
                 {
-                    if (entity.Body.Intersects(collidableEntity.Body) && entity!=collidableEntity && collidableEntity.IsSolid && entity.IsSolid && !entity.Collided)
+                    if (entity.PhysicsType == 1)
                     {
-                        //Debug.WriteLine($"Collided! X {collidableEntity.Body.X} | Y {collidableEntity.Body.Y} | {collidableEntity}");
-
-                        if(entity.PhysicsType==1)
-                        {
-                            CreateCollision(entity, collidableEntity);
-                        }
+                        CreateCollision(entity, collidableEntity);
                     }
                 }
-                
+
                 entity.Collided=false;
                 UpdatePosition(entity);
             }
         }
 
+        public IPhysics HasCollided(IPhysics entity, bool lookAhead=false)
+        {
+            foreach (var collidableEntity in GetCollidableEntities())
+            {
+                if(lookAhead)
+                {
+                    Rectangle nextPosition = GetNextPosition(entity);
+
+                    if (nextPosition.Intersects(collidableEntity.Body) && entity != collidableEntity && collidableEntity.IsSolid && entity.IsSolid && !entity.Collided)
+                    {
+
+                        OnTouch(entity, collidableEntity);
+                        return collidableEntity;
+                    }
+
+                }
+                else
+                {
+                    if (entity.Body.Intersects(collidableEntity.Body) && entity != collidableEntity && collidableEntity.IsSolid && entity.IsSolid && !entity.Collided)
+                    {
+
+                        OnTouch(entity, collidableEntity);
+                        return collidableEntity;
+                    }
+                }
+                
+            }
+
+            return null;
+        }
+
         private void CreateCollision(IPhysics entity1, IPhysics entity2)
         {
-
             Vector2 tempVelocity = entity1.Velocity;
-            double tempSpeed = Math.Sqrt(Math.Pow(tempVelocity.X, 2) + Math.Pow(tempVelocity.Y, 2));
+            double tempSpeed = Math.Sqrt(Math.Pow(tempVelocity.X, 2) + Math.Pow(tempVelocity.Y, 2))*0.8;
             double tempDir = GetDirection(entity1);
-                
-            //Debug.WriteLine(tempSpeed);
 
             entity1.Velocity = Vector2.Zero;
             if(IsCollisionVertical(entity1, entity2))
             {
-                AdditativeImpactVertical(entity1, 5, tempDir + Math.PI);
+                AdditativeImpactVertical(entity1, tempSpeed, tempDir + Math.PI);
             }
             else
             {
-                AdditativeImpactHorizontal(entity1, 5, tempDir + Math.PI);
+                AdditativeImpactHorizontal(entity1, tempSpeed, tempDir + Math.PI);
             }
-            
-            //player.Velocity *= -2;
+            AdditativeImpact(entity2, tempSpeed, tempDir);
+
             entity1.Collided = true;
-            //player.Acceleration = 0.01f;
-
-            OnTouch(entity1, entity2);
-
-            Debug.WriteLine($"COLLISION AT X {entity1.Body.X} | Y {entity1.Body.Y}");
-               
-        }
-
-        
-        public void OnTouch(IPhysics entity1, IPhysics entity2)
-        {
-            Handler handler = Touch;
-
-            if (null != handler) handler(entity1, entity2, EventArgs.Empty);
         }
 
         public bool IsCollisionVertical(IPhysics entity1, IPhysics entity2)
         {
-            if(Rectangle.Intersect(entity1.Body, entity2.Body).Width > Rectangle.Intersect(entity1.Body, entity2.Body).Height)
+            Rectangle nextPosition = GetNextPosition(entity1);
+
+            if (Rectangle.Intersect(nextPosition, entity2.Body).Width > Rectangle.Intersect(nextPosition, entity2.Body).Height)
             {
                 return false;
             }
@@ -125,12 +133,19 @@ namespace MonoSquares
             
         }
 
+        public Rectangle GetNextPosition(IPhysics entity)
+        {
+            Vector2 velocity = new Vector2(entity.Velocity.X * entity.Friction, entity.Velocity.Y * entity.Friction);
+
+            return new Rectangle((int)(Math.Round(entity.Body.X + velocity.X)), (int)(Math.Round(entity.Body.Y + velocity.Y)), entity.Body.Width, entity.Body.Height);
+        }
+
         public void UpdatePosition(IPhysics entity)
         {
             entity.Velocity = new Vector2(entity.Velocity.X * entity.Friction, entity.Velocity.Y * entity.Friction);
-
             //Debug.WriteLine(entity.Body.X);
-            entity.Body = new Rectangle((int)(entity.Body.X + entity.Velocity.X), (int)(entity.Body.Y + entity.Velocity.Y), entity.Body.Width, entity.Body.Height);
+            entity.Body = GetNextPosition(entity);//new Rectangle((int)(entity.Body.X + entity.Velocity.X), (int)(entity.Body.Y + entity.Velocity.Y), entity.Body.Width, entity.Body.Height);
+            
         }
 
         public void AdditativeImpact(IPhysics entity, double amount, double direction)
@@ -149,7 +164,7 @@ namespace MonoSquares
         public void AdditativeImpactHorizontal(IPhysics entity, double amount, double direction)
         {
             amount *= 2;
-            entity.Velocity += new Vector2((float)(amount * Math.Cos(direction)*-1), (float)(amount * Math.Sin(direction)));
+            entity.Velocity += new Vector2((float)(amount * Math.Cos(direction)), (float)(amount * Math.Sin(direction)));
             //Debug.WriteLine("Horizontal Collision");
         }
 
@@ -163,15 +178,18 @@ namespace MonoSquares
             return Math.Atan2(entity.Velocity.Y, entity.Velocity.X);
         }
 
-        
-
-
-        public bool RectOverlap(Vector2 positionA, Vector2 sizeA, Vector2 positionB, Vector2 sizeB)
+        public void OnTouch(IPhysics entity1, IPhysics entity2)
         {
-            if (positionA.X < sizeB.X && sizeA.X > positionB.X && positionA.Y > sizeB.Y && sizeA.Y < positionB.Y)
-                return true;
-            else
-                return false;
+            Handler handler = Touch;
+
+            if (null != handler) handler(entity1, entity2, EventArgs.Empty);
+        }
+
+        public void OnThink(IPhysics entity1, IPhysics entity2)
+        {
+            EventHandler handler = Think;
+
+            if (null != handler) handler(entity1, EventArgs.Empty);
         }
     }
 }

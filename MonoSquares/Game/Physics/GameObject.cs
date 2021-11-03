@@ -6,7 +6,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace MonoSquares
+using MonoSquares.Graphics;
+
+namespace MonoSquares.Physics
 {
     class GameObject : IGraphicsBody, IPhysics
     {
@@ -28,5 +30,6 @@ namespace MonoSquares
         public bool showScore { get; set; } = false;
 
         protected virtual void OnTouch(object entity1, object entity2, EventArgs e) { }
+        protected virtual void OnThink(object entity1, EventArgs e) { }
     }
 }

@@ -5,6 +5,11 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Diagnostics;
 
+using MonoSquares.Controller;
+using MonoSquares.Graphics;
+using MonoSquares.Physics;
+using MonoSquares.Physics.GameObjects;
+
 namespace MonoSquares
 {
 
@@ -87,7 +92,7 @@ namespace MonoSquares
             player.showScore = true;
             Engine.BindEntity(player);
             Cam.BindObject(player);
-
+            
             monster = new Monster();
             monster.TexturePath = "3";
             monster.Body = new Rectangle(500, 500, 30, 30);
@@ -96,7 +101,7 @@ namespace MonoSquares
             Controller monsterControl = new Controller(monster.Control, 3);
             Engine.BindEntity(monster);
             Cam.BindObject(monster);
-
+            
             Cam.LoadTextures(Content);
             Cam.Following = player;
                         
@@ -124,7 +129,7 @@ namespace MonoSquares
                 Engine.AdditativeImpact(player, player.MaxSpeed / (Math.Abs(player.Velocity.X) + 1) * player.Acceleration, Math.PI * 2);
 
 
-            Engine.Think();
+            Engine.Process();
 
             base.Update(gameTime);
         }
