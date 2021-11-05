@@ -16,7 +16,7 @@ namespace MonoSquares.Physics.GameObjects
             Acceleration = 0.8f;
             MaxSpeed = 2.0f;
             Friction = 0.90f;
-            PhysicsType = 1;
+            PhysicsType = (int)PhysicsTypes.Thinking;
             IsSolid = true;
             Damage = 3;
             Health = 1000;

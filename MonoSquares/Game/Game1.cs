@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Diagnostics;
 
-using MonoSquares.Controller;
+using MonoSquares.Controllers;
 using MonoSquares.Graphics;
 using MonoSquares.Physics;
 using MonoSquares.Physics.GameObjects;
@@ -64,10 +64,9 @@ namespace MonoSquares
                     if(y == 0 || y == 6 || x == 0 || x == 9)
                     {
                         walls[y, x] = new GameObject();
-                        walls[y, x].Body = new Rectangle(0, 0, tileSize, tileSize);
                         walls[y, x].TexturePath = "Floor1";
                         walls[y, x].Body = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
-                        walls[y, x].PhysicsType = 0;
+                        walls[y, x].PhysicsType = (int)PhysicsTypes.NonThinking;
                         walls[y, x].IsSolid = true;
                     }
                     else
@@ -75,7 +74,7 @@ namespace MonoSquares
                         walls[y, x] = new GameObject();
                         walls[y, x].TexturePath = "Tile_12";
                         walls[y, x].Body = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
-                        walls[y, x].PhysicsType = 0;
+                        walls[y, x].PhysicsType = (int)PhysicsTypes.NonThinking;
                         walls[y, x].IsSolid = false;
                     }
                     

@@ -11,7 +11,7 @@ namespace MonoSquares.Graphics
     {
         public GraphicsDevice Device;
         public SpriteBatch Scene;
-        public List<IGraphicsBody> Bodies = new List<IGraphicsBody>();
+        public List<IGraphics> Bodies = new List<IGraphics>();
 
         protected float zoom; // Camera Zoom
         public Matrix transform; // Matrix Transform
@@ -59,7 +59,7 @@ namespace MonoSquares.Graphics
                 pos.Y = Following.Body.Y;
             }
         }
-        public void BindObject(IGraphicsBody obj)
+        public void BindObject(IGraphics obj)
         {
             Bodies.Add(obj);
         }

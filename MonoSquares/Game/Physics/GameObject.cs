@@ -10,7 +10,7 @@ using MonoSquares.Graphics;
 
 namespace MonoSquares.Physics
 {
-    class GameObject : IGraphicsBody, IPhysics
+    class GameObject : IGraphics, IPhysics
     {
         public Rectangle Body { get; set; }
         public Texture2D Texture { get; set; }

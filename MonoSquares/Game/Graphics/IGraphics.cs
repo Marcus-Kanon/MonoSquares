@@ -7,11 +7,10 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MonoSquares.Graphics
 {
-    interface IGraphicsBody
+    interface IGraphics
     {
         public Rectangle Body { get; set; }
         public Texture2D Texture { get; set; }
         public String TexturePath { get; set; }
-
     }
 }
