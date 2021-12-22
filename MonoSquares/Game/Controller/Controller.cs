@@ -10,8 +10,7 @@ namespace MonoSquares.Controllers
     {
         public Controller(Func<Task> func, int timer)
         {
-
-            Task statisticsUploader = PeriodicAsync(func, TimeSpan.FromSeconds(timer));
+            Task task = PeriodicAsync(func, TimeSpan.FromSeconds(timer));
         }
 
         public static async Task PeriodicAsync(Func< Task> action, TimeSpan interval, CancellationToken cancellationToken = default)

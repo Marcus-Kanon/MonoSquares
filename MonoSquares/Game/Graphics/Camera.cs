@@ -13,10 +13,10 @@ namespace MonoSquares.Graphics
         public SpriteBatch Scene;
         public List<IGraphics> Bodies = new List<IGraphics>();
 
-        protected float zoom; // Camera Zoom
-        public Matrix transform; // Matrix Transform
-        public Vector2 pos; // Camera Position
-        protected float rotation; // Camera Rotation
+        protected float zoom;
+        public Matrix transform;
+        public Vector2 pos;
+        protected float rotation;
 
         public IPhysics Following;
 
@@ -69,9 +69,6 @@ namespace MonoSquares.Graphics
             foreach (var body in Bodies)
             {
                 body.Texture = content.Load<Texture2D>(body.TexturePath);
-
-                //Debug.WriteLine($"Loaded: {body.TexturePath}");
-
             }
         }
 
@@ -99,10 +96,10 @@ namespace MonoSquares.Graphics
             int ViewportHeight = graphicsDevice.Viewport.Height;
 
             transform =       // Thanks to o KB o for this solution
-              Matrix.CreateTranslation(new Vector3(-pos.X, -pos.Y, 0)) *
-                                         Matrix.CreateRotationZ(Rotation) *
-                                         Matrix.CreateScale(new Vector3(Zoom, Zoom, 1)) *
-                                         Matrix.CreateTranslation(new Vector3(ViewportWidth * 0.5f, ViewportHeight * 0.5f, 0));
+                        Matrix.CreateTranslation(new Vector3(-pos.X, -pos.Y, 0)) *
+                        Matrix.CreateRotationZ(Rotation) *
+                        Matrix.CreateScale(new Vector3(Zoom, Zoom, 1)) *
+                        Matrix.CreateTranslation(new Vector3(ViewportWidth * 0.5f, ViewportHeight * 0.5f, 0));
             return transform;
         }
 
